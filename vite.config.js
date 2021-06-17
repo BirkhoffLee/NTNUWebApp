@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue'
 let opts = {
   plugins: [vue()],
   build: {
-    outDir: '../Xcode/Magnet Extension/Resources/app'
+    outDir: 'dist'
   }
 }
 
