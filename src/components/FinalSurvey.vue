@@ -54,7 +54,11 @@
           <button
             type="submit"
             :class="[buttonClass]"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed" :disabled="buttonDisabled">
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" v-if="buttonDisabled">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
             {{ buttonLabel }}
           </button>
         </div>
@@ -69,12 +73,13 @@ import { CheckIcon, XIcon } from '@heroicons/vue/solid'
 export default {
   data() {
     return {
+      buttonDisabled: false,
       buttonClass: "",
       usernameClass: "",
       passwordClass: "",
       form: {
-        username: "",
-        password: ""
+        username: "40947026s",
+        password: "asd"
       },
       buttonLabel: "",
       showResult: false,
@@ -119,12 +124,17 @@ export default {
       if (!/^[a-z0-9]+$/i.test(this.form.username) || this.form.username.length != 9) {
         this.$refs.username.focus()
         this.toggleUsername()
+        return
       }
       
       if (!this.form.password) {
         this.$refs.password.focus()
         this.togglePassword()
+        return
       }
+      
+      this.buttonDisabled = true
+      this.buttonLabel = '處理中'
       
       const requestOptions = {
         method: "POST",
@@ -135,17 +145,20 @@ export default {
         })
       };
   
-      const endpoint = import.meta.env.PROD ? "https://api.birkhoff.me/v1/ntnuFinalSurvey" : "http://localhost:3000/v1/ntnuFinalSurvey"
+      // const endpoint = import.meta.env.PROD ? "https://api.birkhoff.me/v1/ntnuFinalSurvey" : "http://localhost:3000/v1/ntnuFinalSurvey"
+      const endpoint = "https://api.birkhoff.me/v1/ntnuFinalSurvey"
       
       const response = await fetch(endpoint, requestOptions)
       const data = await response.json()
       
-      console.log(data)
+      console.log(data?.message)
       
       if (data?.message === 'Invalid username/password pair') {
         this.buttonLabel = '帳號或密碼錯誤'
+        this.buttonDisabled = false
         this.$refs.password.focus()
         this.toggleButton()
+        return
       }
       
       this.data.username = data.username
