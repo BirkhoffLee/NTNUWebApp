@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue'
 let opts = {
   plugins: [vue()],
   build: {
-    outDir: 'dist'
+    outDir: 'docs'
   }
 }
 
