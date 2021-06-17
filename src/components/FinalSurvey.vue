@@ -78,8 +78,8 @@ export default {
       usernameClass: "",
       passwordClass: "",
       form: {
-        username: "40947026s",
-        password: "asd"
+        username: "",
+        password: ""
       },
       buttonLabel: "",
       showResult: false,
@@ -92,6 +92,7 @@ export default {
   },
   created() {
     this.resetFormStyle()
+    this.$refs.username.focus()
   },
   methods: {
     resetFormStyle() {
