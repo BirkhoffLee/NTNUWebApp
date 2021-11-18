@@ -90,9 +90,9 @@ export default {
       }
     }
   },
-  created() {
-    this.resetFormStyle()
-    this.$refs.username.focus()
+  mounted() {
+    this.resetFormStyle();
+    this.$refs.username.focus();
   },
   methods: {
     resetFormStyle() {
@@ -152,8 +152,15 @@ export default {
       const response = await fetch(endpoint, requestOptions)
       const data = await response.json()
       
-      console.log(data?.message)
+      console.log(data)
       
+      if (data?.message === 'Error: time window for acadmSecondQuesSL has passed') {
+        this.buttonLabel = '已超過填寫時間'
+        this.buttonDisabled = false
+        this.toggleButton()
+        return
+      }
+
       if (data?.message === 'Invalid username/password pair') {
         this.buttonLabel = '帳號或密碼錯誤'
         this.buttonDisabled = false
