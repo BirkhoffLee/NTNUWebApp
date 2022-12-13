@@ -13,9 +13,10 @@
           帳號密碼不會被儲存
         </p>
       </div>
-      
+
       <div class="flow-root" v-if="showResult">
         <ul class="-mb-8">
+          <p class="text-center" v-if="data.courses.length == 0">沒有待填寫的課程評鑑</p>
           <li v-for="(course, idx) in data.courses" :key="course.ct_pk">
             <div class="relative pb-8">
               <span v-if="(idx !== data.courses.length - 1)" class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true" />
@@ -78,13 +79,12 @@ export default {
       usernameClass: "",
       passwordClass: "",
       form: {
-        username: "",
-        password: ""
+        username: "40947026S",
+        password: "U7oRKi4nzUv2"
       },
       buttonLabel: "",
       showResult: false,
       data: {
-        username: "",
         term: "",
         courses: [],
       }
@@ -127,16 +127,16 @@ export default {
         this.toggleUsername()
         return
       }
-      
+
       if (!this.form.password) {
         this.$refs.password.focus()
         this.togglePassword()
         return
       }
-      
+
       this.buttonDisabled = true
       this.buttonLabel = '處理中'
-      
+
       const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -145,15 +145,15 @@ export default {
           password: this.form.password,
         })
       };
-  
-      // const endpoint = import.meta.env.PROD ? "https://api.birkhoff.me/v1/ntnuFinalSurvey" : "http://localhost:3000/v1/ntnuFinalSurvey"
-      const endpoint = "https://api.birkhoff.me/v1/ntnuFinalSurvey"
-      
+
+      const endpoint = import.meta.env.PROD ? "https://api.birkhoff.me/v3/ntnu/doFinalSurvey" : "http://localhost:8787/v3/ntnu/doFinalSurvey"
+      // const endpoint = "https://api.birkhoff.me/v1/ntnuFinalSurvey"
+
       const response = await fetch(endpoint, requestOptions)
       const data = await response.json()
-      
+
       console.log(data)
-      
+
       if (data?.message === 'Error: time window for acadmSecondQuesSL has passed') {
         this.buttonLabel = '已超過填寫時間'
         this.buttonDisabled = false
@@ -169,9 +169,16 @@ export default {
         return
       }
       
-      this.data.username = data.username
-      this.data.term = data.term
-      this.data.courses = data.coursesData.map(el => {
+      if (data?.success !== true) {
+        this.buttonLabel = '其他錯誤'
+        this.buttonDisabled = false
+        this.$refs.password.focus()
+        this.toggleButton()
+        return
+      }
+
+      this.data.term = data.data.term
+      this.data.courses = data.data.coursesData.map(el => {
         const completed = el.completeFlag === "Y"
 
         return {
@@ -182,7 +189,7 @@ export default {
           iconBackground: completed ? 'bg-green-500' : 'bg-red-500',
         }
       })
-      
+
       this.showResult = true
     }
   }
