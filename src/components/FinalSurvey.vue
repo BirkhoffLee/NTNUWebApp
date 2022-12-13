@@ -79,8 +79,8 @@ export default {
       usernameClass: "",
       passwordClass: "",
       form: {
-        username: "40947026S",
-        password: "U7oRKi4nzUv2"
+        username: "",
+        password: ""
       },
       buttonLabel: "",
       showResult: false,
